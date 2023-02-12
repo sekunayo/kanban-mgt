@@ -7,10 +7,10 @@ const checkboxStyle = css({
     backgroundColor: "#F4F7FD",
     borderRadius: "4px",
     width: "100%",
-    height: "40px",
+    height: "auto",
     display: "flex",
     alignItems: "center",
-    padding: "13px 0px 12px 12px",
+    padding: "13px 16px 12px 12px",
     cursor: "pointer",
 
     "&:hover": {
@@ -43,17 +43,18 @@ interface CheckboxProps {
     label?: string;
     name: string;
     style?: any;
+    checked?: boolean;
 }
 
-export const Checkbox = ({name, style, label }: CheckboxProps) => {
-    // const [field, meta, helpers] = useField({name: name, type: "checkbox"});
+export const Checkbox = ({name, style, label, checked}: CheckboxProps) => {
+    const [field, meta, helpers] = useField({name: name, type: "checkbox"});
 
-    // const isChecked = Boolean(meta.touched === true) && Boolean(field.checked === true)
+    const isChecked = Boolean(meta.touched === true) && Boolean(field.checked === true)
 
     return (
         <div style={style} className={checkboxStyle}>
             <label className={checkboxLabelStyle}>
-                <Field style={{ marginRight: "16px", height: "16px", width: "16px" }} type="checkbox" name={name} />
+                <Field  style={{ marginRight: "16px", height: "16px", width: "16px" }} type="checkbox" {...field} name={name}/>
                 <span>{label}</span>
             </label>
         </div>

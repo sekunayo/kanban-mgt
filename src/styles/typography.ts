@@ -12,7 +12,6 @@ export const heading02 = {
     fontWeight: 700,
     lineHeight: "23px",
     letterSpacing: "0px",
-    textAlign: "left"
 }
 
 export const heading03 = {
@@ -38,7 +37,6 @@ export const body01 = {
     fontWeight: 500,
     lineHeight: "23px",
     letterSpacing: "0px",
-    textAlign: "left"
 }
 
 export const body02 = {

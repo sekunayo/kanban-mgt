@@ -26,6 +26,8 @@
         "@/types/*": ["src/types/*"],
         "@/utils/*": ["src/utils/*"],
         "@/assets": ["src/assets"],
+        "@/screens": ["src/screens"],
+        "@/mock": ["src/mock"],
         "@/*": ["src/*"]
     }
     },
