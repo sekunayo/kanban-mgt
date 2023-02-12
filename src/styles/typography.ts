@@ -4,7 +4,6 @@ export const heading01 = {
     fontWeight: 700,
     lineHeight: "30px",
     letterSpacing: "0px",
-    textAign: "left"
 }
 
 export const heading02 = {
@@ -22,7 +21,6 @@ export const heading03 = {
     fontWeight: 700,
     lineHeight: "19px",
     letterSpacing: "0px",
-    textAlign: "left",
 }
 
 export const heading04 = {
@@ -49,14 +47,12 @@ export const body02 = {
     fontWeight: 700,
     lineHeight: "15px",
     letterSpacing: "0px",
-    textAlign: "left"
 }
 
 export const buttonText = {
-    "font-family": 'Plus Jakarta Sans',
-    "font-style": "normal",
-    "font-weight": "700",
-    "font-size": "13px",
-    "line-height": "23px",
-    "text-align": "center"
+    fontFamily: 'Plus Jakarta Sans',
+    fontStyle: "normal",
+    fontWeight: 700,
+    fontSize: "13px",
+    lineHeight: "23px"
 }

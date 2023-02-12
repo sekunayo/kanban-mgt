@@ -1,32 +1,36 @@
 import { css } from "@emotion/css";
 
-import { getButtonSize, getButtonVariant } from "./button";
-
 import { ButtonSizeType, ButtonVariantType } from "@/types/component";
+
+import { colors } from "@/styles/colors";
 import { buttonText } from "@/styles/typography";
 
-const buttonStyle = (backgroundColor: string, height: string, color: string) => css({
-    backgroundColor,
-    borderRadius: "24px",
+const buttonStyle = (variant: ButtonVariantType, size: ButtonSizeType) => css({
+    backgroundColor : variant === 'primary' ? colors.primary : variant === 'secondary' ? "rgba(99, 95, 199, 0.1)" : colors.red01,
+    borderRadius: size ===  "sm" ? '24px' : '20px',
     width: "100%",
-    height: height,
-    color: color,
-    ...buttonText
+    height: size ===  "sm" ? '40px' : '48px',
+    color : variant === 'primary' ? colors.white : variant === 'secondary' ? colors.primary : colors.white,
+    ...buttonText,
+    textAlign: "center",
+    '&:hover': {
+        backgroundColor: variant === 'primary' ? colors.secondary01 : variant === 'secondary' ? 'rgba(99, 95, 199, 0.25)' : colors.red02,
+    }
 })
 
 interface ButtonProps {
     variant: ButtonVariantType;
     size: ButtonSizeType;
     children?: any;
+    style?: any;
+    disabled?: boolean;
     handleClick?: () => void;
 }
 
-export const Button = ({variant, size, children}: ButtonProps) => {
 
-    const {color, backgroundColor} = getButtonVariant(variant);
-    const {height} = getButtonSize(size);
+export const Button = ({variant, size, children, style, disabled}: ButtonProps) => {
 
     return (
-        <button className={buttonStyle(backgroundColor, height , color)}>{children}</button>
+        <button style={style} disabled={disabled} className={buttonStyle(variant, size)}>{children}</button>
     )
 }
