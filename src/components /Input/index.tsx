@@ -35,7 +35,7 @@ const inputStyles = css({
         overflowX: "auto",
 
         '&::placeholder': {
-            color: `rgba(${colors.dark01}, 0.25)`
+            color: `rgba(0, 1, 18, 0.25)`
         }
     }
 })

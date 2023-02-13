@@ -1,23 +1,27 @@
 import { Form, Formik } from 'formik';
 import React from 'react';
+import { useState } from 'react';
 import { Button } from './components /Button';
 import { Checkbox } from './components /Checkbox';
 import { Header } from './components /Header';
 import { Input } from './components /Input';
 import { subTasks } from './mock';
-import PlatformLaunch  from './pages/platform-launch';
+import PlatformLaunch, { AddColumnModal } from './pages/platform-launch';
 import { ViewTask } from './screens /ViewTask';
 
 function App() {
+  const [openAddColumn, setOpenAddColumn] = useState(false);
+
   return (
-    <div style={{ width: "100%", height: "100vh", backgroundColor: "#F4F7FD", overflow: "hidden"}}>
-      <Header headerTitle='Platform Launch' />
+    <>
+      <div style={{ width: "100%", height: "100vh", backgroundColor: "#F4F7FD", overflow: "hidden" }}>
+        <Header headerTitle='Platform Launch' />
 
-        <PlatformLaunch/>
+        <PlatformLaunch handleToggleColumn={() => setOpenAddColumn(!openAddColumn)}  />
 
-      {/* <ViewTask subTasks={subTasks} heading='Research pricing points of various competitors and trial different business models' description="We know what we're planning to build for version one. Now we need to finalise the first pricing model we'll use. Keep iterating the subtasks until we have a coherent proposition." /> */}
+        {/* <ViewTask subTasks={subTasks} heading='Research pricing points of various competitors and trial different business models' description="We know what we're planning to build for version one. Now we need to finalise the first pricing model we'll use. Keep iterating the subtasks until we have a coherent proposition." /> */}
 
-      {/* <Formik initialValues={{
+        {/* <Formik initialValues={{
         email: '',
         firstName: 'red',
         lastName: '',
@@ -35,7 +39,10 @@ function App() {
           <Checkbox name="testing" label="Testing" />
         </Form>
       </Formik> */}
-    </div>
+      </div>
+
+      {openAddColumn && <AddColumnModal handleToggleColumn={() => setOpenAddColumn(!openAddColumn)} />}
+    </>
   );
 }
 

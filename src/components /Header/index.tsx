@@ -41,7 +41,7 @@ export const Header = ({ headerTitle , style}: HeaderProps) => {
             <h3 className={headerTitleStyles}>{headerTitle}</h3>
             <div className={headerOptionsStyle}>
                 <div style={{ width: "164px" }}>
-                    <Button variant="primary" size="sm" >+ Add New Task</Button>
+                    <Button type="button" variant="primary" size="sm" >+ Add New Task</Button>
                 </div>
                 <OverflowMenu />
             </div>

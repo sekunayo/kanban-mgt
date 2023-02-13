@@ -1,4 +1,6 @@
 import { Button } from "@/components /Button"
+import { Modal } from "@/components /Modal"
+import { AddColumn } from "@/screens /AddColumn"
 import { colors } from "@/styles/colors"
 import { heading02 } from "@/styles/typography"
 import { css } from "@emotion/css"
@@ -23,22 +25,33 @@ const platformLaunchStyles = css({
     justifyContent: "center",
     alignItems: "center"
 })
- 
-const PlatformLaunch = () => {
+
+interface PlatformLaunchProps {
+    handleToggleColumn: () => void;
+}
+
+const PlatformLaunch = ({handleToggleColumn}: PlatformLaunchProps) => {
     return (
         <div className={platformLaunchStyles}>
-            <PlatformLaunchIsEmpty />
+            <PlatformLaunchIsEmpty handleToggleColumn={handleToggleColumn} />
         </div>
     )
 }
 
+export const AddColumnModal = ({handleToggleColumn}: PlatformLaunchProps) => {
+    return (
+        <Modal handleToggleModal={handleToggleColumn}>
+            <AddColumn />
+        </Modal>
+    )
+}
 
-const PlatformLaunchIsEmpty = () => {
+const PlatformLaunchIsEmpty = ({handleToggleColumn}: PlatformLaunchProps) => {
     return (
         <div className={emptyContainerStyles}>
             <h4>This board is empty. Create a new column to get started.</h4>
             <div style={{ width: "174px" }}>
-                <Button variant="primary" size="sm" >+ Add New Column</Button>
+                <Button handleClick={handleToggleColumn} type="button" variant="primary" size="sm" >+ Add New Column</Button>
             </div>
         </div>
     )

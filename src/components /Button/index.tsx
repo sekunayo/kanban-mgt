@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 
-import { ButtonSizeType, ButtonVariantType } from "@/types/component";
+import { ButtonSizeType, ButtonType, ButtonVariantType } from "@/types/component";
 
 import { colors } from "@/styles/colors";
 import { buttonText } from "@/styles/typography";
@@ -21,6 +21,7 @@ const buttonStyle = (variant: ButtonVariantType, size: ButtonSizeType) => css({
 interface ButtonProps {
     variant: ButtonVariantType;
     size: ButtonSizeType;
+    type: ButtonType;
     children?: any;
     style?: any;
     disabled?: boolean;
@@ -28,9 +29,9 @@ interface ButtonProps {
 }
 
 
-export const Button = ({variant, size, children, style, disabled}: ButtonProps) => {
+export const Button = ({variant, size, children, style, disabled, handleClick}: ButtonProps) => {
 
     return (
-        <button style={style} disabled={disabled} className={buttonStyle(variant, size)}>{children}</button>
+        <button onClick={handleClick} style={style} disabled={disabled} className={buttonStyle(variant, size)}>{children}</button>
     )
 }
