@@ -1,9 +1,9 @@
 import { Button } from "@/components /Button"
-import { Modal } from "@/components /Modal"
-import { AddColumn } from "@/screens /AddColumn"
+import { AddColumnModal } from "@/screens /AddColumn"
 import { colors } from "@/styles/colors"
 import { heading02 } from "@/styles/typography"
 import { css } from "@emotion/css"
+import { useState } from "react"
 
 const emptyContainerStyles = css({
     display: "flex",
@@ -30,19 +30,20 @@ interface PlatformLaunchProps {
     handleToggleColumn: () => void;
 }
 
-const PlatformLaunch = ({handleToggleColumn}: PlatformLaunchProps) => {
+const PlatformLaunch = () => {
+
+    const [openAddColumn, setOpenAddColumn] = useState(false);
+
+    const handleToggleColumn = () =>{
+        setOpenAddColumn(!openAddColumn)
+    }
+
     return (
         <div className={platformLaunchStyles}>
             <PlatformLaunchIsEmpty handleToggleColumn={handleToggleColumn} />
-        </div>
-    )
-}
 
-export const AddColumnModal = ({handleToggleColumn}: PlatformLaunchProps) => {
-    return (
-        <Modal handleToggleModal={handleToggleColumn}>
-            <AddColumn />
-        </Modal>
+            {openAddColumn && <AddColumnModal handleToggleColumn={handleToggleColumn} />}
+        </div>
     )
 }
 

@@ -1,10 +1,12 @@
 import { Button } from "@/components /Button";
 import { Input } from "@/components /Input";
+import { Modal } from "@/components /Modal";
 import { colors } from "@/styles/colors";
 import { colorPickerArray } from "@/utils/constants";
 import { css } from "@emotion/css"
 import { Form, Formik } from "formik";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { handleAddColumn } from "./addColumn";
 
 const addColumnStyles = css({
@@ -54,9 +56,29 @@ interface AddColumnProps {
     color: string;
 }
 
-export const AddColumn = () => {
+interface AddColumnModal {
+    handleToggleColumn: () => void
+}
+
+export const AddColumnModal = ({handleToggleColumn}: AddColumnModal) => {
+    const domNode = document.getElementById('addColumnModal');
+
     return (
-        <div className={addColumnStyles}>
+        <>
+            {createPortal(
+                <Modal handleToggleModal={handleToggleColumn}>
+                    <AddColumn />
+                </Modal>, domNode!)}
+        </>
+    )
+}
+
+const AddColumn = () => {
+
+
+    return (
+        <div
+            className={addColumnStyles}>
             <h4>Add New Column</h4>
 
             <Formik initialValues={{
@@ -83,6 +105,8 @@ export const AddColumn = () => {
                 </Form>
             </Formik>
         </div>
+
+
     )
 }
 
@@ -95,6 +119,6 @@ const ColorPicker = ({ color }: AddColumnProps) => {
     }
 
     return (
-        <button type="button" onClick={toggleColorPickerActive } onFocus={toggleColorPickerActive} className={colorPickerStyles(color)}></button>
+        <button type="button" onClick={toggleColorPickerActive} onFocus={toggleColorPickerActive} className={colorPickerStyles(color)}></button>
     )
 }
