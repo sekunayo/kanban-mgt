@@ -3,3 +3,12 @@ export const viewTaskSubtaskInitialValues = {
     subTask2: true,
     subTask3: false
 }
+export const addColumnInitialValues = {
+    columnName: "",
+    color: ""
+}
+
+export const addBoardInitialValues = {
+    name: "",
+    columns: []
+}

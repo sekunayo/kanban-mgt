@@ -1,6 +1,9 @@
 import { colors } from "@/styles/colors";
 import { body02, heading03 } from "@/styles/typography";
+import { DnDType } from "@/types/component";
 import { css } from "@emotion/css";
+import { useRef } from "react";
+import { Draggable } from "react-beautiful-dnd";
 
 const cardStyles = css({
     backgroundColor: colors.white,
@@ -13,8 +16,9 @@ const cardStyles = css({
     flexDirection: "column",
     justifyContent: "center",
     gap: "8px",
+    cursor: 'move',
 
-    "& h3":{
+    "& h3": {
         ...heading03,
         color: colors.dark01
     },
@@ -25,17 +29,32 @@ const cardStyles = css({
     }
 });
 
+interface DragItem {
+    index: number
+    id: string
+    type: string
+}
+
 interface CardProps {
-    title : string;
+    title: string;
     subTaskCurrentCount: number;
     subTaskTotal: number;
     style?: any;
 }
-export const Card = ({title, subTaskCurrentCount, subTaskTotal, style}: CardProps) => {
+export const Card = ({ title, subTaskCurrentCount, subTaskTotal, style }: CardProps) => {
+
     return (
-        <div style={style} className={cardStyles}>
-            <h3>{title}</h3>
-            <p>{subTaskCurrentCount} of {subTaskTotal} subtasks</p>
-        </div>
+        <Draggable draggableId="jjjdj" index={1}>
+            {
+                (provided) => (
+                    <div ref={provided.innerRef} {...provided.dragHandleProps} {...provided.draggableProps} role="button" style={style} className={cardStyles}>
+                        <h3>{title}</h3>
+                        <p>{subTaskCurrentCount} of {subTaskTotal} subtasks</p>
+                    </div>
+                )
+            }
+
+        </Draggable>
+
     )
 }

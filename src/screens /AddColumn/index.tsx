@@ -2,12 +2,15 @@ import { Button } from "@/components /Button";
 import { Input } from "@/components /Input";
 import { Modal } from "@/components /Modal";
 import { colors } from "@/styles/colors";
+import { ColumnInput } from "@/types/schema";
 import { colorPickerArray } from "@/utils/constants";
+import { hexToRgb } from "@/utils/helpers";
+import { addColumnInitialValues } from "@/utils/initialValues";
 import { css } from "@emotion/css"
 import { Form, Formik } from "formik";
-import { useState } from "react";
+import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { handleAddColumn } from "./addColumn";
+import { handleColorPicker } from "./addColumn";
 
 const addColumnStyles = css({
     width: "480px",
@@ -49,54 +52,82 @@ const colorPickerStyles = (backgroundColor: string) => css({
         border: '2px solid white',
         padding: "5px",
     }
-
 })
 
-interface AddColumnProps {
+const addColumnColorPreviewStyles = (color: string) => css({
+    width: "100%",
+    height: "40px",
+    borderRadius: "3px",
+    backgroundColor: `rgba(${hexToRgb(color)}, 0.4)`,
+    display: "flex",
+    alignItems: "center"
+})
+
+const addColumnColorPreviewCircleStyles = (color: string) => css({
+    width: "16px",
+    height: "16px",
+    borderRadius: "50%",
+    backgroundColor: color,
+    marginLeft: "16px",
+})
+
+interface ColorPickerProps {
     color: string;
+    setColorValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface AddColumnModal {
-    handleToggleColumn: () => void
+    handleToggleColumn: () => void;
+    handleAddColumn: (values: ColumnInput) => void;
 }
 
-export const AddColumnModal = ({handleToggleColumn}: AddColumnModal) => {
+interface AddColumnProps {
+    handleAddColumn: (values: ColumnInput) => void;
+    handleToggleColumn: () => void;
+}
+
+export const AddColumnModal = ({ handleToggleColumn, handleAddColumn }: AddColumnModal) => {
     const domNode = document.getElementById('addColumnModal');
 
     return (
         <>
             {createPortal(
                 <Modal handleToggleModal={handleToggleColumn}>
-                    <AddColumn />
+                    <AddColumn handleToggleColumn={handleToggleColumn} handleAddColumn={handleAddColumn} />
                 </Modal>, domNode!)}
         </>
     )
 }
 
-const AddColumn = () => {
-
+const AddColumn = ({ handleAddColumn, handleToggleColumn }: AddColumnProps) => {
+    const [colorValue, setColorValue] = useState("");
 
     return (
         <div
             className={addColumnStyles}>
             <h4>Add New Column</h4>
 
-            <Formik initialValues={{
-                columnName: ""
-            }}
+            <Formik initialValues={addColumnInitialValues}
                 onSubmit={(values, actions) => {
-                    handleAddColumn(values.columnName)
+                    handleAddColumn({
+                        columnName: values.columnName,
+                        color: colorValue
+                    })
                     actions.resetForm();
+                    handleToggleColumn();
                 }}
 
             >
                 <Form className={addColumnFormStyles}>
                     <Input name="columnName" type="text" label="Name" placeholder='e.g Todo' />
+                    {Boolean(colorValue !== "")  ?  <div className={addColumnColorPreviewStyles(colorValue)}>
+                        <div className={addColumnColorPreviewCircleStyles(colorValue)}></div>
+                    </div> : null}
                     <div className={addColumnColorPickerStyles}>
                         {
                             colorPickerArray.map((element, index) => {
                                 return (
-                                    <ColorPicker key={index + 1} color={element} />
+                                    <ColorPicker key={index + 1} setColorValue={setColorValue} color={element} />
                                 )
                             })
                         }
@@ -110,12 +141,13 @@ const AddColumn = () => {
     )
 }
 
-const ColorPicker = ({ color }: AddColumnProps) => {
+const ColorPicker = ({ color, setColorValue }: ColorPickerProps) => {
 
     const [colorPickerActiveState, setColorPickerActiveState] = useState(false);
 
     const toggleColorPickerActive = () => {
         setColorPickerActiveState(!colorPickerActiveState);
+        setColorValue(color)
     }
 
     return (

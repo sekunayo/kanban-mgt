@@ -1,59 +1,41 @@
-import { Button } from "@/components /Button"
-import { AddColumnModal } from "@/screens /AddColumn"
-import { colors } from "@/styles/colors"
-import { heading02 } from "@/styles/typography"
-import { css } from "@emotion/css"
 import { useState } from "react"
+import { css } from "@emotion/css"
 
-const emptyContainerStyles = css({
-    display: "flex",
-    flexDirection: "column",
-    gap: "32px",
-    justifyContent: "center",
-    alignItems: "center",
+import { BoardLayout } from "@/layout/BoardLayout"
 
-    "& h4": {
-        color: colors.gray01,
-        ...heading02
-    }
-})
+import { AddColumnModal } from "@/screens /AddColumn"
+import { ViewTask } from "@/screens /ViewTask"
+
+import { ColumnResponse, ColumnInput, BoardResponse, BoardInput } from "@/types/schema"
 
 const platformLaunchStyles = css({
     width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
+    height: "calc(100vh - 96px)",
+    overflow: "auto",
 })
 
 interface PlatformLaunchProps {
-    handleToggleColumn: () => void;
+    columnList: [] | ColumnResponse[];
+    handleAddColumn: (values: ColumnInput) => void;
+    boardList: [] | BoardResponse[]
 }
 
-const PlatformLaunch = () => {
+const PlatformLaunch = ({ columnList , boardList, handleAddColumn}: PlatformLaunchProps) => {
 
     const [openAddColumn, setOpenAddColumn] = useState(false);
+    const [openViewTask, setViewTask] = useState(false);
+    const [currentTask, setCurrentTask] = useState<any>(null)
 
-    const handleToggleColumn = () =>{
+    const handleToggleColumn = () => {
         setOpenAddColumn(!openAddColumn)
     }
 
     return (
         <div className={platformLaunchStyles}>
-            <PlatformLaunchIsEmpty handleToggleColumn={handleToggleColumn} />
+            <BoardLayout handleToggleColumn={handleToggleColumn} columnList={columnList} />
 
-            {openAddColumn && <AddColumnModal handleToggleColumn={handleToggleColumn} />}
-        </div>
-    )
-}
-
-const PlatformLaunchIsEmpty = ({handleToggleColumn}: PlatformLaunchProps) => {
-    return (
-        <div className={emptyContainerStyles}>
-            <h4>This board is empty. Create a new column to get started.</h4>
-            <div style={{ width: "174px" }}>
-                <Button handleClick={handleToggleColumn} type="button" variant="primary" size="sm" >+ Add New Column</Button>
-            </div>
+            {openAddColumn && <AddColumnModal handleToggleColumn={handleToggleColumn} handleAddColumn={handleAddColumn} />}
+            {Boolean(openViewTask && currentTask !== null) ? <ViewTask task={currentTask} /> : null}
         </div>
     )
 }

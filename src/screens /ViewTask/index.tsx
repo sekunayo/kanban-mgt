@@ -5,6 +5,7 @@ import { Checkbox } from "@/components /Checkbox";
 import { body01, body02, heading02 } from "@/styles/typography";
 import { Formik, Form } from "formik";
 import { viewTaskSubtaskInitialValues } from "@/utils/initialValues";
+import { TaskResponse } from "@/types/schema";
 
 const viewTaskStyles = css({
     backgroundColor: colors.white,
@@ -40,29 +41,26 @@ const viewTaskSubtaskStyle = css({
 })
 
 interface ViewTaskProps {
-    heading: string;
-    description: string;
-    subTasks: Array<{label: string, checked: Boolean}>
-
+    task: TaskResponse | null
 }
 
-export const ViewTask = ({ heading, description, subTasks }: ViewTaskProps) => {
-    const checkedSubtasks  = Object.values(subTasks).filter((element) => element.checked === true);
-    const subTasksLength = subTasks.length
+export const ViewTask = ({ task }: ViewTaskProps) => {
+    const checkedSubtasks  = task ? Object.values(task.subtasks)?.filter((element) => element ? element.isCompleted === true : null) : null;
+    const subTasksLength = task?.subtasks?.length
 
     return (
         <div className={viewTaskStyles}>
-            <h4 className={viewTaskHeadingStyle}>{heading}</h4>
-            <p className={viewTaskDescriptionStyle}>{description}</p>
+            <h4 className={viewTaskHeadingStyle}>{task?.title}</h4>
+            <p className={viewTaskDescriptionStyle}>{task?.description}</p>
 
             <div style={{display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px"}}>
-                <h6 className={viewTaskSubHeadingStyle}>{`Subtasks (${checkedSubtasks.length} of ${subTasksLength})`}</h6>
+                <h6 className={viewTaskSubHeadingStyle}>{`Subtasks (${checkedSubtasks?.length} of ${subTasksLength})`}</h6>
                 <Formik initialValues={viewTaskSubtaskInitialValues} onSubmit={(values, action) => console.log(values)}>
                     <Form className={viewTaskSubtaskStyle}>
                     {
-                        subTasks.map((element: {label: string, checked: Boolean} , index: number) => {
+                        task?.subtasks?.map((element: {title: string, isCompleted: Boolean} , index: number) => {
                             return (
-                                <Checkbox style={{pointerEvents: "none"}} key={index + 1} name={`subTask${index + 1}`} label={element.label} />
+                                <Checkbox style={{pointerEvents: "none"}} key={index + 1} name={`subTask${index + 1}`} label={element.title} />
                             )
                         })
                     }

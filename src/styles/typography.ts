@@ -28,7 +28,6 @@ export const heading04 = {
     fontWeight: 700,
     lineHeight: "15px",
     letterSpacing: "2.4px",
-    textAlign: "left"
 }
 
 export const body01 = {
