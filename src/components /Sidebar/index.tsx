@@ -1,26 +1,32 @@
+import { css } from "@emotion/css";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+
+
 import { ReactComponent as BoardIcon } from "@/assets/icons/icon-board.svg";
 import { ReactComponent as LogoDark } from "@/assets/icons/logo-dark.svg";
-import { colors } from "@/styles/colors";
-import { heading03 } from "@/styles/typography";
-import { css } from "@emotion/css";
-import data from "@/mock/index.json"
-import { useState } from "react";
-import { BoardResponse } from "@/types/schema";
 import { ReactComponent as Sun } from "@/assets/icons/icon-light-theme.svg";
 import { ReactComponent as Moon } from "@/assets/icons/icon-dark-theme.svg";
 import { ReactComponent as HideSidebar } from "@/assets/icons/icon-hide-sidebar.svg";
 
+import { colors } from "@/styles/colors";
+import { heading03 } from "@/styles/typography";
+
+import { BoardResponse } from "@/types/schema";
+
+
 import { Switch } from "../Switch";
 import { hexToRgb } from "@/utils/helpers";
+import { RootState } from "@/store";
+
+import { setCurrentBoard } from "@/slices/board";
+import { openModal } from "@/slices/modal";
 
 
 interface SidebarProps {
-    handleActiveBoard: (activeBoard: BoardResponse) => void;
-    boardsList: [] | BoardResponse[];
     toggleSidebar: boolean;
     handleToggleSidebar: () => void;
-    handleToggleBoard: () => void;
-
 }
 
 interface SidebarMenuItemProps {
@@ -162,11 +168,13 @@ const sidebarToggleStyles = css({
     }
 })
 
-export const Sidebar = ({ handleActiveBoard, boardsList, handleToggleBoard, handleToggleSidebar, toggleSidebar}: SidebarProps) => {
-    const [activeBoardId, setActiveBoardId] = useState(boardsList[0]?.id)
+export const Sidebar = ({handleToggleSidebar, toggleSidebar}: SidebarProps) => {
+    const boards = useSelector((state: RootState) => state.board.boards)
+    const dispatch = useDispatch()
+    const [activeBoardId, setActiveBoardId] = useState(boards[0]?.id)
 
     const handleMenuItemClick = (element: BoardResponse) => {
-        handleActiveBoard(element)
+        setCurrentBoard(element)
         setActiveBoardId(element.id)
     }
 
@@ -175,13 +183,13 @@ export const Sidebar = ({ handleActiveBoard, boardsList, handleToggleBoard, hand
             <div style={{ padding: "34px 0px 0px 32px", marginBottom: "54px" }}><LogoDark /></div>
             <div>
                 {
-                    boardsList?.map((element: BoardResponse, index: number) => {
+                    boards?.map((element: BoardResponse, index: number) => {
                         return <SidebarMenuItem key={index} isActive={Boolean(element?.id === activeBoardId)} currentElement={element} handleMenuItemClick={handleMenuItemClick} />
 
                     })
                 }
             </div>
-            <button onClick={handleToggleBoard} type="button" className={sidebarButtonStyles}>
+            <button onClick={() => dispatch(openModal('ADD_BOARD'))} type="button" className={sidebarButtonStyles}>
                 <BoardIcon />
                 <p>+ Create New Board</p>
             </button>

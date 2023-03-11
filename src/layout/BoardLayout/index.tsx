@@ -1,9 +1,10 @@
-import { Button } from "@/components /Button";
-import { colors } from "@/styles/colors";
-import { heading02 } from "@/styles/typography";
-import { ColumnInput, ColumnResponse } from "@/types/schema";
+import { openModal} from "@/slices/modal";
+import { RootState } from "@/store";
+import { ColumnResponse } from "@/types/schema";
+import { checkIfListEmpty } from "@/utils/helpers";
 import { css } from "@emotion/css";
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { ColumnLayout, EmptyColumnLayout } from "../ColumnLayout";
 import { EmptyLayout } from "../EmptyLayout";
 
@@ -19,19 +20,22 @@ const boardLayoutContentStyles = css({
 
 
 interface BoardLayoutProps {
-    handleToggleColumn: () => void;
     columnList: [] | ColumnResponse[];
 }
 
-export const BoardLayout = ({ handleToggleColumn, columnList }: BoardLayoutProps) => {
-    const isColumnListEmpty = Boolean(columnList.length === 0)
+export const BoardLayout = () => {
+    const columns = useSelector((state: RootState) => state.column.columns)
+    const dispatch = useDispatch()
 
+    const handleToggleColumn = () => {
+        dispatch(openModal('ADD_COLUMN'))
+      }
     return (
-        isColumnListEmpty ? <EmptyLayout text="This board is empty. Create a new column to get started." btnLabel="+ Add New Column" handleAdd={handleToggleColumn} /> : <BoardLayoutContent handleToggleColumn={handleToggleColumn} columnList={columnList} />
+        checkIfListEmpty(columns) ? <EmptyLayout handleToggle={handleToggleColumn} text="This board is empty. Create a new column to get started." btnLabel="+ Add New Column" /> : <BoardLayoutContent columnList={columns} />
     )
 }
 
-const BoardLayoutContent = ({ columnList, handleToggleColumn }: BoardLayoutProps) => {
+const BoardLayoutContent = ({ columnList }: BoardLayoutProps) => {
     return (
         <div className={boardLayoutContentStyles}>
             {
@@ -39,7 +43,7 @@ const BoardLayoutContent = ({ columnList, handleToggleColumn }: BoardLayoutProps
                     return <ColumnLayout key={index + 1} tasks={element.tasks} column={element} />
                 })
             }
-            <EmptyColumnLayout handleToggleColumn={handleToggleColumn} />
+            <EmptyColumnLayout />
         </div>
     )
 }

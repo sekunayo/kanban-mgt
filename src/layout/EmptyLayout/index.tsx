@@ -1,12 +1,14 @@
 import { Button } from "@/components /Button";
+import { openModal } from "@/slices/modal";
 import { colors } from "@/styles/colors";
 import { heading02 } from "@/styles/typography";
 import { css } from "@emotion/css";
+import { useDispatch } from "react-redux";
 
 interface EmptyLayoutProps {
-    handleAdd: () => void;
     text: string;
-    btnLabel: string
+    btnLabel: string;
+    handleToggle: () => void;
 }
 
 const emptyContainerStyles = css({
@@ -32,13 +34,14 @@ const emptyContainerBoxStyles = css({
 })
 
 
-export const EmptyLayout = ({ handleAdd, text, btnLabel }: EmptyLayoutProps) => {
+export const EmptyLayout = ({ text, btnLabel, handleToggle }: EmptyLayoutProps) => {
+    const dispatch = useDispatch()
         return (
             <div className={emptyContainerStyles}>
                 <div className={emptyContainerBoxStyles}>
                     <h4>{text}</h4>
                     <div style={{ width: "174px" }}>
-                        <Button handleClick={handleAdd} type="button" variant="primary" size="sm" >{btnLabel}</Button>
+                        <Button handleClick={handleToggle} type="button" variant="primary" size="sm" >{btnLabel}</Button>
                     </div>
                 </div>
             </div>

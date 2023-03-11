@@ -19,3 +19,8 @@ export const getCompletedSubtask = (subtasks: Array<{ title: string; isCompleted
 export const generateUniqueId = (name: string) => {
     return `${name}${uuidv4()}`
 }
+
+export const checkIfListEmpty = (list: any) => {
+    const listIsEmpty = Boolean(list?.length === 0)
+    return listIsEmpty
+}

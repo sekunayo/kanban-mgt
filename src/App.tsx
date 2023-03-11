@@ -1,28 +1,24 @@
-import { css } from '@emotion/css';
-import { Form, Formik } from 'formik';
-import React, { useCallback, useEffect } from 'react';
 import { useState } from 'react';
-import { Button } from './components /Button';
-import { Checkbox } from './components /Checkbox';
-import { Header } from './components /Header';
-import { Input } from './components /Input';
-import { Sidebar } from './components /Sidebar';
-import PlatformLaunch from './pages/platform-launch';
-import data from "@/mock/index.json";
-import { ViewTask } from './screens /ViewTask';
-import { BoardResponse, ColumnInput, ColumnResponse } from './types/schema';
+import { useSelector, useDispatch } from 'react-redux'
+import { css } from '@emotion/css';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { EmptyLayout } from './layout/EmptyLayout';
-import { AddBoardModal } from './screens /AddBoard';
-import { generateUniqueId } from './utils/helpers';
+
+import { Header } from '@/components /Header';
+import { Sidebar } from '@/components /Sidebar';
+import { ModalManager } from '@/components /Modal';
+
+
+import PlatformLaunch from '@/pages';
+import { EmptyLayout } from '@/layout/EmptyLayout';
 import { ReactComponent as ShowSidebar } from "@/assets/icons/icon-show-sidebar.svg";
-import { AddTaskModal } from './screens /AddTask';
+import { RootState } from '@/store';
+import { checkIfListEmpty } from '@/utils/helpers';
+import { openModal } from '@/slices/modal';
+
 
 const portals = (
   <>
-    <div id="addColumnModal"></div>
-    <div id="addBoardModal"></div>
-    <div id="addTaskModal"></div>
+    <div id="modal"></div>
   </>
 )
 
@@ -58,64 +54,38 @@ const appShowSidebarStyles = css({
 
 
 function App() {
-  const [boards, setBoards] = useState<[] | BoardResponse[]>([]);
-  const [currentActiveBoard, setCurrentActiveBoard] = useState<BoardResponse | null>(boards[0]);
-  const [columnList, setColumnList] = useState<[] | ColumnResponse[]>(currentActiveBoard ? currentActiveBoard?.columns : []);
-  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
+  const boards = useSelector((state: RootState) => state.board.boards)
+  const dispatch = useDispatch()
+  // const { columns } = useSelector((state: RootState) => state.column)
   const [toggleSidebar, setToggleSidebar] = useState(false);
-  const [openAddBoard, setOpenAddBoard] = useState(false);
 
+  const showSidebar = Boolean((toggleSidebar === false) && (checkIfListEmpty(boards) === false))
 
-
-  const isColumnListEmpty = Boolean(columnList?.length === 0)
-  const isBoardListEmty = Boolean(boards?.length === 0)
-  const showSidebar = Boolean((toggleSidebar === false) && (isBoardListEmty === false))
- 
-  const handleActiveBoard = (activeBoard: BoardResponse) => {
-    setCurrentActiveBoard(activeBoard);
-  }
-
-  const handleToggleBoard = () => {
-    setOpenAddBoard(!openAddBoard)
-  }
+  const { toggle } = useSelector((state: RootState) => state.modal)
 
   const handleToggleSidebar = () => {
     setToggleSidebar(!toggleSidebar)
   }
 
-  const handleToggleTask = () => {
-    setOpenAddTask(!openAddTask)
-  }
-
-  const handleAddColumn = (values: ColumnInput) => {
-    const uniqueColumnId = generateUniqueId("column")
-    const newColumnList = columnList ? [...columnList, { name: values.columnName, tasks: [], id: uniqueColumnId }] : [];
-    setColumnList(newColumnList);
-  }
-
-  const handleAddBoard = (values: any) => {
-    const uniqueBoardId = generateUniqueId("board")
-    const newBoardList = [...boards, { ...values, id: uniqueBoardId }];
-    setCurrentActiveBoard(newBoardList[0] as BoardResponse)
-    setBoards(newBoardList);
+  const handleToggleBoard = () => {
+    dispatch(openModal('ADD_BOARD'))
   }
 
   return (
     <DragDropContext onDragEnd={() => console.log("item dropped")}>
       <div className={appStyles(showSidebar)}>
-        {showSidebar ? <Sidebar toggleSidebar={toggleSidebar} handleToggleSidebar={handleToggleSidebar} handleToggleBoard={handleToggleBoard} handleActiveBoard={handleActiveBoard} boardsList={boards} /> : null}
+        {showSidebar ? <Sidebar toggleSidebar={toggleSidebar} handleToggleSidebar={handleToggleSidebar} /> : null}
         <div className={appContentStyles}>
-          <Header handleToggleAddTask={handleToggleTask} openAddTask={openAddTask} isColumnListEmpty={isColumnListEmpty} showSidebar={showSidebar} disabled={isColumnListEmpty} headerTitle={currentActiveBoard?.name} />
-          {isBoardListEmty ? <EmptyLayout text="This app is empty. Create a new board to get started." btnLabel="+ Create New Board" handleAdd={handleToggleBoard} /> : <PlatformLaunch handleAddColumn={handleAddColumn} boardList={boards} columnList={columnList} />}
+          <Header showSidebar={showSidebar} />
+          {checkIfListEmpty(boards) ? <EmptyLayout handleToggle={handleToggleBoard} text="This app is empty. Create a new board to get started." btnLabel="+ Create New Board" /> : <PlatformLaunch />}
         </div>
 
         {Boolean(showSidebar === false) && <button type="button" onClick={handleToggleSidebar} className={appShowSidebarStyles}>
-         <ShowSidebar />
+          <ShowSidebar />
         </button>}
       </div>
-      {openAddTask && <AddTaskModal handleAddTask={() => console.log('s')} handleToggleTask={handleToggleTask} />} 
 
-      {openAddBoard && <AddBoardModal handleToggleBoard={handleToggleBoard} handleAddBoard={handleAddBoard} />}
+      {toggle && <ModalManager /> }
       {portals}
     </DragDropContext>
   );

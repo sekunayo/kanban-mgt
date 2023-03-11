@@ -9,4 +9,6 @@ export type InputType = "text" | "number" | "email";
 export const DnDType = {
     Card: 'card'
   }
+
+export type ModalType =   'ADD_TASK' | 'ADD_COLUMN' |'ADD_BOARD'
   

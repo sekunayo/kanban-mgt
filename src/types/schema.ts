@@ -1,12 +1,12 @@
 export type TaskStatus = "Done" | "Todo" | "Doing"
 
 
-export interface ColumnInput {
-    columnName: string;
-    color: string
+export interface ColumnPayload {
+    name: string;
+    color?: string;
 }
 
-export interface BoardInput {
+export interface BoardPayload {
     name: string,
     columns: [] | ColumnResponse[]
 }
@@ -22,7 +22,9 @@ export interface BoardResponse {
 }
 export interface ColumnResponse {
     name: string;
-    tasks: TaskResponse[];
+    color?: string;
+    tasks: TaskResponse[] | [];
+    id: string;
 }
 
 export interface SubTaskResponse {

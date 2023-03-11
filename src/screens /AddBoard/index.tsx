@@ -4,12 +4,13 @@ import { createPortal } from "react-dom";
 
 import { Button } from "@/components /Button";
 import { Input } from "@/components /Input";
-import { Modal } from "@/components /Modal";
 
 import { colors } from "@/styles/colors";
-import { BoardInput } from "@/types/schema";
 
 import { addBoardInitialValues } from "@/utils/initialValues";
+import { addBoard } from "@/slices/board";
+import { useDispatch } from "react-redux";
+import { closeModal } from "@/slices/modal";
 
 const addBoardStyles = css({
     width: "480px",
@@ -26,30 +27,9 @@ const addBoardFormStyles = css({
     gap: "24px"
 })
 
-interface AddBoardModal {
-    handleToggleBoard: () => void;
-    handleAddBoard: (values: BoardInput) => void;
-}
 
-interface AddBoardProps {
-    handleAddBoard: (values: BoardInput) => void;
-    handleToggleBoard: () => void;
-}
-
-export const AddBoardModal = ({ handleToggleBoard, handleAddBoard }: AddBoardModal) => {
-    const domNode = document.getElementById('addBoardModal');
-
-    return (
-        <>
-            {createPortal(
-                <Modal handleToggleModal={handleToggleBoard}>
-                    <AddBoard handleToggleBoard={handleToggleBoard} handleAddBoard={handleAddBoard} />
-                </Modal>, domNode!)}
-        </>
-    )
-}
-
-const AddBoard = ({ handleAddBoard, handleToggleBoard }: AddBoardProps) => {
+export const AddBoard = () => {
+    const dispatch = useDispatch();
     return (
         <div
             className={addBoardStyles}>
@@ -57,12 +37,13 @@ const AddBoard = ({ handleAddBoard, handleToggleBoard }: AddBoardProps) => {
 
             <Formik initialValues={addBoardInitialValues}
                 onSubmit={(values, actions) => {
-                    handleAddBoard({
+                    dispatch(addBoard({
                         name: values.name,
                         columns: []
-                    })
+                    }))
                     actions.resetForm();
-                    handleToggleBoard();
+                    dispatch((closeModal()))
+
                 }}
 
             >

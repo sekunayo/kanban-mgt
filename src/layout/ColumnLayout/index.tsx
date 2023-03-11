@@ -1,11 +1,13 @@
 import { colors } from "@/styles/colors";
 import { css } from "@emotion/css";
 import { heading01, heading04 } from "@/styles/typography"
-import { ColumnResponse, SubTaskResponse, TaskResponse } from "@/types/schema";
+import { ColumnResponse, TaskResponse } from "@/types/schema";
 import { Card } from "@/components /Card";
 import { getCompletedSubtask } from "@/utils/helpers";
 import { DnDType } from "@/types/component";
 import { Droppable } from "react-beautiful-dnd";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/slices/modal";
 
 const columnLayoutStyles = css({
     height: "100%",
@@ -49,8 +51,6 @@ const columnHeaderCircleStyles = (color: string) => css({
     height: "15px",
     width: "15px",
     borderRadius: "50%"
-
-
 })
 
 interface ColumnLayoutProps {
@@ -58,12 +58,6 @@ interface ColumnLayoutProps {
     column: ColumnResponse
     color?: string;
 }
-
-interface EmptyColumnLayoutProps {
-    handleToggleColumn: () => void;
-}
-
-
 
 export const ColumnLayout = ({ tasks, column, color }: ColumnLayoutProps) => {
 
@@ -89,7 +83,14 @@ export const ColumnLayout = ({ tasks, column, color }: ColumnLayoutProps) => {
     )
 }
 
-export const EmptyColumnLayout = ({ handleToggleColumn }: EmptyColumnLayoutProps) => {
+export const EmptyColumnLayout = () => {
+
+    const dispatch = useDispatch()
+
+    const handleToggleColumn = () => {
+        dispatch(openModal('ADD_COLUMN'))
+    }
+
     return (
         <div className={emptyColumnLayoutStyles}>
             <button type="button" onClick={handleToggleColumn}>+ New Column</button>

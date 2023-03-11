@@ -1,5 +1,11 @@
+import { closeModal } from "@/slices/modal";
+import { RootState } from "@/store";
+import { modals } from "@/utils/modal";
 import { css } from "@emotion/css"
 import { useRef } from "react";
+import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useClickAway } from "react-use";
 
 const modalStyles = css({
@@ -14,25 +20,26 @@ const modalStyles = css({
     left: "0px"
 })
 
-interface ModalProps {
-    children: any;
-    handleToggleModal: () => void;
-}
-
-export const Modal = ({ children, handleToggleModal }: ModalProps) => {
-
+export const ModalManager = () => {
+    const domNode = document.getElementById('modal');
+    const dispatch = useDispatch()
+    const { modalType } = useSelector((state: RootState) => state.modal)
     const modalContentRef = useRef(null);
 
     useClickAway(modalContentRef, () => {
-        handleToggleModal()!
+        dispatch(closeModal())
     });
 
-
     return (
-        <div className={modalStyles}>
-            <div ref={modalContentRef} >
-                {children}
-            </div>
-        </div>
+        <>
+            {
+              createPortal(<div className={modalStyles}>
+                    <div ref={modalContentRef} >
+                        {modals[modalType]}
+                    </div>
+                </div>, domNode!)
+            }
+        </>
+
     )
 }

@@ -10,8 +10,6 @@ const dropdownStyles = css({
     borderRadius: "4px",
     width: "100%", 
     position: "relative"
-
-
 })
 
 const dropdownListStyles = css({

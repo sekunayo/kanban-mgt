@@ -7,7 +7,6 @@ import { Formik, Form } from "formik";
 // import { addTaskSubtaskInitialValues } from "@/utils/initialValues";
 import { TaskInput, TaskResponse } from "@/types/schema";
 import { Input } from "@/components /Input";
-import { Modal } from "@/components /Modal";
 import { createPortal } from "react-dom";
 import { TextArea } from "@/components /TextArea";
 import { hexToRgb } from "@/utils/helpers";
@@ -53,14 +52,7 @@ const addTaskSubtaskListStyle = css({
 })
 
 
-
-interface AddTaskProps {
-    handleToggleTask: () => void;
-    handleAddTask: (values: TaskInput) => void;
-}
-
-
-const AddTask = ({ handleAddTask, handleToggleTask }: AddTaskProps) => {
+export const AddTask = () => {
     // const checkedSubtasks  = task ? Object.values(task.subtasks)?.filter((element) => element ? element.isCompleted === true : null) : null;
     // const subTasksLength = task?.subtasks?.length
 
@@ -77,7 +69,7 @@ const AddTask = ({ handleAddTask, handleToggleTask }: AddTaskProps) => {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "16px" }}>
                 <Formik initialValues={{}} onSubmit={(values, action) => {
                     console.log(values)
-                    handleToggleTask();
+                    console.log('close modal')
                 }
 
                 }>
@@ -108,18 +100,5 @@ const AddTask = ({ handleAddTask, handleToggleTask }: AddTaskProps) => {
                 </Formik>
             </div>
         </div>
-    )
-}
-
-export const AddTaskModal = ({ handleToggleTask, handleAddTask }: AddTaskProps) => {
-    const domNode = document.getElementById('addTaskModal');
-
-    return (
-        <>
-            {createPortal(
-                <Modal handleToggleModal={handleToggleTask}>
-                    <AddTask handleAddTask={handleAddTask} handleToggleTask={handleToggleTask} />
-                </Modal>, domNode!)}
-        </>
     )
 }

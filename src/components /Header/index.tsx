@@ -1,11 +1,20 @@
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useClickAway } from "react-use";
+import { css } from "@emotion/css";
+
 import { colors } from "@/styles/colors";
 import { body01, heading01 } from "@/styles/typography";
-import { css } from "@emotion/css";
-import { Button } from "../Button";
+
+
 import { ReactComponent as OverflowMenu } from "@/assets/icons/icon-vertical-ellipsis.svg";
 import { ReactComponent as LogoDark } from "@/assets/icons/logo-dark.svg";
-import { useRef, useState } from "react";
-import { useClickAway } from "react-use";
+
+import { Button } from "../Button";
+import { RootState } from "@/store";
+import { openModal } from "@/slices/modal";
+import { checkIfListEmpty } from "@/utils/helpers";
 
 
 const headerStyles = css({
@@ -83,16 +92,16 @@ const headerDropdownListItemStyles = (isBoardListEmpty: boolean | undefined) => 
 })
 
 interface HeaderProps {
-    headerTitle?: string;
     style?: any;
     disabled?: boolean;
     showSidebar?: boolean;
-    isColumnListEmpty?: boolean;
-    openAddTask?: boolean;
     handleToggleAddTask?: () => void;
 }
 
-export const Header = ({ headerTitle, style, disabled, showSidebar, isColumnListEmpty, handleToggleAddTask }: HeaderProps) => {
+export const Header = ({ style, showSidebar }: HeaderProps) => {
+    const currentBoard = useSelector((state: RootState) => state.board.currentBoard)
+    const columns = useSelector((state: RootState) => state.column.columns)
+    const dispatch = useDispatch()
     const [toggleDropdown, setToggleDropdown] = useState(false);
 
     const dropdownRef = useRef(null);
@@ -110,10 +119,10 @@ export const Header = ({ headerTitle, style, disabled, showSidebar, isColumnList
         <div style={style} className={headerStyles}>
             {Boolean(showSidebar === false) && <div className={headerLogoStyles}><LogoDark /></div>}
             <div className={headerNavigationStyles}>
-                <h3 className={headerTitleStyles}>{headerTitle}</h3>
+                <h3 className={headerTitleStyles}>{currentBoard?.name}</h3>
                 <div className={headerOptionsStyle}>
-                    {isColumnListEmpty ? null : <div style={{ width: "164px" }}>
-                        <Button handleClick={handleToggleAddTask} type="button" disabled={disabled} variant="primary" size="sm" >+ Add New Task</Button>
+                    {checkIfListEmpty(columns) ? null : <div style={{ width: "164px" }}>
+                        <Button handleClick={() => dispatch(openModal('ADD_TASK'))} type="button" disabled={checkIfListEmpty(columns)} variant="primary" size="sm" >+ Add New Task</Button>
                     </div> }
                     <div ref={dropdownRef} className={headerDropdownStyles}>
                         <button onClick={handleToggleDropdown} type="button">

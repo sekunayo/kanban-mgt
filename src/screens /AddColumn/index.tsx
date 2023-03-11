@@ -1,16 +1,24 @@
-import { Button } from "@/components /Button";
-import { Input } from "@/components /Input";
-import { Modal } from "@/components /Modal";
-import { colors } from "@/styles/colors";
-import { ColumnInput } from "@/types/schema";
-import { colorPickerArray } from "@/utils/constants";
-import { hexToRgb } from "@/utils/helpers";
-import { addColumnInitialValues } from "@/utils/initialValues";
 import { css } from "@emotion/css"
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
-import { createPortal } from "react-dom";
-import { handleColorPicker } from "./addColumn";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+
+import { Button } from "@/components /Button";
+import { Input } from "@/components /Input";
+
+import { updateBoardColumn } from "@/slices/board";
+import { addColumn } from "@/slices/column";
+import { closeModal } from "@/slices/modal";
+
+import { RootState } from "@/store";
+import { colors } from "@/styles/colors";
+
+import { colorPickerArray } from "@/utils/constants";
+import { hexToRgb } from "@/utils/helpers";
+import { addColumnInitialValues } from "@/utils/initialValues";
+
+
 
 const addColumnStyles = css({
     width: "480px",
@@ -76,31 +84,10 @@ interface ColorPickerProps {
     setColorValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-interface AddColumnModal {
-    handleToggleColumn: () => void;
-    handleAddColumn: (values: ColumnInput) => void;
-}
-
-interface AddColumnProps {
-    handleAddColumn: (values: ColumnInput) => void;
-    handleToggleColumn: () => void;
-}
-
-export const AddColumnModal = ({ handleToggleColumn, handleAddColumn }: AddColumnModal) => {
-    const domNode = document.getElementById('addColumnModal');
-
-    return (
-        <>
-            {createPortal(
-                <Modal handleToggleModal={handleToggleColumn}>
-                    <AddColumn handleToggleColumn={handleToggleColumn} handleAddColumn={handleAddColumn} />
-                </Modal>, domNode!)}
-        </>
-    )
-}
-
-const AddColumn = ({ handleAddColumn, handleToggleColumn }: AddColumnProps) => {
+export const AddColumn = () => {
     const [colorValue, setColorValue] = useState("");
+    const currentBoard = useSelector((state: RootState) => state.board.currentBoard)
+    const dispatch = useDispatch()
 
     return (
         <div
@@ -109,18 +96,18 @@ const AddColumn = ({ handleAddColumn, handleToggleColumn }: AddColumnProps) => {
 
             <Formik initialValues={addColumnInitialValues}
                 onSubmit={(values, actions) => {
-                    handleAddColumn({
-                        columnName: values.columnName,
+                    dispatch(addColumn(  {
+                        name: values.columnName,
                         color: colorValue
-                    })
-                    actions.resetForm();
-                    handleToggleColumn();
-                }}
-
-            >
+                    }))   
+                    dispatch(updateBoardColumn)
+               actions.resetForm();
+               dispatch((closeModal()))
+                }
+                }>
                 <Form className={addColumnFormStyles}>
                     <Input name="columnName" type="text" label="Name" placeholder='e.g Todo' />
-                    {Boolean(colorValue !== "")  ?  <div className={addColumnColorPreviewStyles(colorValue)}>
+                    {Boolean(colorValue !== "") ? <div className={addColumnColorPreviewStyles(colorValue)}>
                         <div className={addColumnColorPreviewCircleStyles(colorValue)}></div>
                     </div> : null}
                     <div className={addColumnColorPickerStyles}>
@@ -136,8 +123,6 @@ const AddColumn = ({ handleAddColumn, handleToggleColumn }: AddColumnProps) => {
                 </Form>
             </Formik>
         </div>
-
-
     )
 }
 
